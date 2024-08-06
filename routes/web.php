@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\App;
@@ -46,6 +48,9 @@ Route::group(['middleware'=>['auth',SetLocale::class]],function(){
         return auth()->user()->can('Edit Employee');
 
     });
+
+    Route::resource('/employee',EmployeeController::class);
+    Route::resource('/company',CompanyController::class);
     
 });
 
