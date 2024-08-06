@@ -42,7 +42,9 @@ Route::get('/test',function(){
 Route::group(['middleware'=>['auth',SetLocale::class]],function(){
 
     Route::get('/dashboard',function(){
-        return 'dashboard';
+        
+        return auth()->user()->can('Edit Employee');
+
     });
     
 });
