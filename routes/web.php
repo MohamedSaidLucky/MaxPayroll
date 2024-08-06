@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Session;
 
 Route::get('/', function () {
     return view('welcome');
@@ -11,16 +13,46 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/greeting/{locale}', function (string $locale) {
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+
+
+Route::get('/lang/{locale}', function (string $locale) {
+    
     if (! in_array($locale, ['en', 'ar'])) {
-        abort(400);
+        abort(404);
     }
  
-    App::setLocale($locale);
+    Session::put('locale',$locale);
 
-    return __('messages.welcome');
- 
+    return back();
+
     // ...
 });
+
+Route::get('/test',function(){
+
+    return __('messages.welcome');
+
+})->middleware(['auth',SetLocale::class]);
+
+
+// Need Authontication
+Route::group(['middleware'=>['auth',SetLocale::class]],function(){
+
+    Route::get('/dashboard',function(){
+        return 'dashboard';
+    });
+    
+});
+
+// No Need To Authontication
+Route::group(['middleware'=>SetLocale::class],function(){
+
+    Route::get('/docksh',function(){
+        return 'docksh';
+    });
+    
+});
+
